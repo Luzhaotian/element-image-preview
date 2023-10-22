@@ -3,7 +3,7 @@
     <!-- <img alt="Vue logo" src="./assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <button @click="btnClick">点击预览</button>
-    <el-image
+    <lzt-el-image
       src="https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg"
       style="width: 100px; height: 100px"
       :preview-src-list="[
@@ -11,7 +11,7 @@
         'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg',
       ]"
     >
-      ></el-image
+      ></lzt-el-image
     >
   </div>
 </template>

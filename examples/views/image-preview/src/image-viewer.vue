@@ -85,7 +85,7 @@ const Mode = {
 const mousewheelEventName = isFirefox() ? "DOMMouseScroll" : "mousewheel";
 
 export default {
-  name: "elImageViewer",
+  name: "lztElImageViewer",
 
   props: {
     urlList: {
