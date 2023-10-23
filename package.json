@@ -1,9 +1,9 @@
 {
   "name": "lzt-element-image-preview",
-  "version": "1.1.5",
+  "version": "1.1.7",
   "private": false,
   "description": "基于 Element ui 封装的图片预览功能组件",
-  "main": "main.js",
+  "main": "dist/lzt-element-image-preview.umd.js",
   "license": "MIT",
   "keywords": [
     "element",
@@ -14,7 +14,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "lib": "vue-cli-service build --target lib ./src/views/image-preview/index.js --name elementLztImagePreview --dest dist"
+    "lib": "vue-cli-service build --target lib packages/index.js"
   },
   "dependencies": {
     "core-js": "^3.8.3",

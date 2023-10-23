@@ -1,5 +1,10 @@
 # image-preview
 
+<!-- 
+    lib 
+    "lib": "vue-cli-service build --target lib packages/index.js --name elementLztImagePreview --dest dist"
+ -->
+
 ## Project setup
 ```
 yarn install
