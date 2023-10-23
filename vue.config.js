@@ -1,27 +1,16 @@
-// const { defineConfig } = require("@vue/cli-service");
-// module.exports = defineConfig({
-//   transpileDependencies: true,
-//   lintOnSave: false,
-//   css: {
-//     extract: false,
-//   },
-// });
 const { defineConfig } = require("@vue/cli-service");
-// module.exports = defineConfig({
-//   transpileDependencies: true
-// })
 
 const path = require("path");
 module.exports = defineConfig({
   transpileDependencies: true,
-  lintOnSave: false,
+  lintOnSave: false, // 关闭语法检查
   css: {
     extract: false,
   },
   pages: {
     index: {
       // 修改项目入口文件
-      entry: "examples/main.js",
+      entry: "src/main.js",
       template: "public/index.html",
       filename: "index.html",
     },

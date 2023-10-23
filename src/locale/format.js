@@ -1,4 +1,4 @@
-import { hasOwn } from 'examples/utils/util.js';
+import { hasOwn } from '@/utils/util.js';
 
 const RE_NARGS = /(%|)\{([0-9a-zA-Z_]+)\}/g;
 /**

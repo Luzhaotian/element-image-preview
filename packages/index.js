@@ -1,5 +1,6 @@
 import ImagePreview from "./image-preview/main";
-import "./src/css/theme-chalk/src/index.css"
+// import "./src/css/theme-chalk/src/index.css"
+import "./src/css/theme-chalk/src/index.scss"
 
 const components = [ImagePreview];
 

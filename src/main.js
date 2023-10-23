@@ -1,6 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
-import imagePreview from "examples/views/image-preview/index.js";
+import imagePreview from '@/views/image-preview/index.js'
 import "@/css/theme-chalk/src/index.scss";
 
 Vue.use(imagePreview);
