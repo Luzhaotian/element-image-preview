@@ -50,7 +50,7 @@
       <div class="el-image-viewer__canvas">
         <img
           v-for="(url, i) in urlList"
-          v-show="i === index"
+          v-if="i === index"
           ref="img"
           class="el-image-viewer__img"
           :key="url"
