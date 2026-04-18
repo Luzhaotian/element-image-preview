@@ -16,6 +16,9 @@
   },
   "homepage": "https://github.com/Luzhaotian/element-image-preview#readme",
   "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "element",
     "image",

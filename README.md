@@ -1,5 +1,7 @@
 # image-preview
 
+NPM 包：<https://www.npmjs.com/package/lzt-element-image-preview>
+
 源码与问题反馈：<https://github.com/Luzhaotian/element-image-preview/issues>
 
 ## 基于 vue2 兼容老项目 Element UI 图片预览插件
