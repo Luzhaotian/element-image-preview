@@ -4,6 +4,14 @@
   "private": false,
   "description": "基于 Element ui 封装的图片预览功能组件",
   "main": "dist/lzt-element-image-preview.umd.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Luzhaotian/element-image-preview.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Luzhaotian/element-image-preview/issues"
+  },
+  "homepage": "https://github.com/Luzhaotian/element-image-preview#readme",
   "license": "MIT",
   "keywords": [
     "element",

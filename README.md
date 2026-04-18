@@ -1,5 +1,7 @@
 # image-preview
 
+源码与问题反馈：<https://github.com/Luzhaotian/element-image-preview/issues>
+
 ## 基于 vue2 兼容老项目 Element UI 图片预览插件
 
 > 主要是给老项目，尤其是 2.11 以前的项目，没有图片预览提供的插件
