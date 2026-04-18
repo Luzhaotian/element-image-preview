@@ -21,6 +21,8 @@ npm i element-theme-chalk -S
 
 克隆仓库后执行 `npm install`、`npm run serve`。演示应用从 **`packages/index.js`** 注册组件，与 **`npm run lib`** 打出来的 npm 包为**同一份源码**，避免演示与发布不一致。
 
+`npm install` 会通过 **husky** 安装 Git 钩子：**`pre-commit`** 会对暂存的 `*.js` / `*.vue` 跑 **ESLint**（`lint-staged`）。全量检查可执行 `npm run lint`。
+
 ### 导入
 
 自 v1.3.0 起，**不再把整份 Element 主题打进 JS**，请务必备好样式（与此前 README 推荐方式一致），否则图标与布局会异常。
