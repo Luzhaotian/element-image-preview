@@ -17,9 +17,15 @@ npm i lzt-element-image-preview
 npm i element-theme-chalk -S
 ```
 
+### 本地开发
+
+克隆仓库后执行 `npm install`、`npm run serve`。演示应用从 **`packages/index.js`** 注册组件，与 **`npm run lib`** 打出来的 npm 包为**同一份源码**，避免演示与发布不一致。
+
 ### 导入
 
 自 v1.3.0 起，**不再把整份 Element 主题打进 JS**，请务必备好样式（与此前 README 推荐方式一致），否则图标与布局会异常。
+
+如果使用旧版 使用版本 1.2.0 以下版本
 
 ```javascript
 // main.js
