@@ -28,8 +28,11 @@
           <i class="el-icon-arrow-right" />
         </span>
       </template>
-      <!-- ACTIONS -->
-      <div class="el-image-viewer__btn el-image-viewer__actions">
+      <!-- ACTIONS（仅图片页：PDF 已栅格化为图片，与图片一致） -->
+      <div
+        v-if="currentKind === 'image' && !rasterLoading"
+        class="el-image-viewer__btn el-image-viewer__actions"
+      >
         <div class="el-image-viewer__actions__inner">
           <i class="el-icon-zoom-out" @click="handleActions('zoomOut')"></i>
           <i class="el-icon-zoom-in" @click="handleActions('zoomIn')"></i>
@@ -48,19 +51,26 @@
       </div>
       <!-- CANVAS -->
       <div class="el-image-viewer__canvas">
-        <img
-          v-for="(url, i) in urlList"
-          v-if="i === index"
-          ref="img"
-          class="el-image-viewer__img"
-          :key="url"
-          :src="currentImg"
-          :style="imgStyle"
-          referrerpolicy="no-referrer"
-          @load="handleImgLoad"
-          @error="handleImgError"
-          @mousedown="handleMouseDown"
-        />
+        <div v-if="rasterLoading" class="el-image-viewer__raster-loading">
+          {{ t("el.image.pdfRasterLoading") }}
+        </div>
+        <template v-else>
+          <img
+            v-if="currentKind === 'image'"
+            ref="img"
+            class="el-image-viewer__img"
+            :key="'img-' + index"
+            :src="currentItem.src"
+            :style="imgStyle"
+            referrerpolicy="no-referrer"
+            @load="handleImgLoad"
+            @error="handleImgError"
+            @mousedown="handleMouseDown"
+          />
+          <div v-else class="el-image-viewer__unknown">
+            {{ unknownText }}
+          </div>
+        </template>
       </div>
     </div>
   </transition>
@@ -70,6 +80,13 @@
 import { on, off } from "../src/utils/dom.js";
 import { rafThrottle, isFirefox } from "../src/utils/util.js";
 import { PopupManager } from "../src/utils/popup";
+import Locale from "../src/mixins/locale.js";
+import {
+  inferPreviewKind,
+  PREVIEW_KIND,
+  imageMimeFromMagic,
+} from "../src/utils/preview-kind.js";
+import { renderPdfPagesToBlobUrls } from "../src/utils/pdf-render.js";
 
 const Mode = {
   CONTAIN: {
@@ -87,8 +104,15 @@ const mousewheelEventName = isFirefox() ? "DOMMouseScroll" : "mousewheel";
 export default {
   name: "lztElImageViewer",
 
+  mixins: [Locale],
+
   props: {
     urlList: {
+      type: Array,
+      default: () => [],
+    },
+    /** 与 urlList 下标对齐，取 'image' | 'pdf'；无法从流/链接推断时必须传入 */
+    previewTypes: {
       type: Array,
       default: () => [],
     },
@@ -116,14 +140,18 @@ export default {
       type: Boolean,
       default: true,
     },
+    /** 为 true 时首尾循环；为 false 时在第一页禁止上一张、最后一页禁止下一张（适合多页 PDF） */
+    infinite: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
-      index: this.initialIndex,
-      isShow: false,
-      infinite: true,
+      index: 0,
       loading: false,
+      rasterLoading: false,
       mode: Mode.CONTAIN,
       transform: {
         scale: 1,
@@ -132,20 +160,38 @@ export default {
         offsetY: 0,
         enableTransition: false,
       },
+      /** 扁平列表：PDF 多页展开为多张图片 */
+      flatItems: [],
+      /** 勿用 _ 前缀：Vue2 不代理 data 中以 _/$ 开头的键，this._foo 会为 undefined */
+      revokeUrlList: [],
+      rebuildSeq: 0,
     };
   },
   computed: {
     isSingle() {
-      return this.urlList.length <= 1;
+      return this.flatItems.length <= 1;
     },
     isFirst() {
       return this.index === 0;
     },
     isLast() {
-      return this.index === this.urlList.length - 1;
+      return this.index >= this.flatItems.length - 1;
     },
-    currentImg() {
-      return this.urlList[this.index];
+    currentItem() {
+      return (
+        this.flatItems[this.index] || {
+          kind: PREVIEW_KIND.UNKNOWN,
+          src: "",
+        }
+      );
+    },
+    currentKind() {
+      return this.currentItem.kind;
+    },
+    unknownText() {
+      const m = this.currentItem.message;
+      if (m) return m;
+      return this.t("el.image.previewTypeUnknown");
     },
     imgStyle() {
       const { scale, deg, offsetX, offsetY, enableTransition } = this.transform;
@@ -166,22 +212,214 @@ export default {
     },
   },
   watch: {
+    urlList: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.rebuildFlatItems();
+      },
+    },
+    previewTypes: {
+      deep: true,
+      handler() {
+        this.rebuildFlatItems();
+      },
+    },
+    initialIndex() {
+      this.rebuildFlatItems();
+    },
     index: {
       handler: function (val) {
         this.reset();
         this.onSwitch(val);
       },
     },
-    currentImg() {
+    currentItem() {
       this.$nextTick(() => {
-        const $img = this.$refs.img[0];
-        if (!$img.complete) {
+        const $img = this.$refs.img;
+        if ($img && !$img.complete) {
           this.loading = true;
         }
       });
     },
   },
   methods: {
+    async rebuildFlatItems() {
+      const seq = ++this.rebuildSeq;
+      this.revokeBlobUrls();
+      this.rasterLoading = true;
+      this.loading = true;
+
+      const list = this.urlList || [];
+      const hints = this.previewTypes || [];
+      const flat = [];
+      const spans = [];
+
+      const rawIdx = Number(this.initialIndex);
+      const startIdx =
+        Number.isFinite(rawIdx) && rawIdx >= 0 ? rawIdx : 0;
+      const targetListIdx = Math.min(startIdx, Math.max(0, list.length - 1));
+
+      try {
+        for (let i = 0; i < list.length; i++) {
+          if (seq !== this.rebuildSeq) return;
+
+          const item = list[i];
+          let hint = hints[i];
+          if (hint !== "image" && hint !== "pdf") hint = null;
+          let kind = hint || inferPreviewKind(item);
+
+          if (kind !== PREVIEW_KIND.IMAGE && kind !== PREVIEW_KIND.PDF) {
+            console.error(
+              "[lzt-element-image-preview] 无法识别预览项类型（索引 " +
+                i +
+                "）。请为 preview-types 传入 \"image\" 或 \"pdf\"，或为该项设置 { type: \"pdf\"|\"image\" }。"
+            );
+            flat.push({
+              kind: PREVIEW_KIND.UNKNOWN,
+              src: "",
+              key: "u-" + i,
+            });
+            spans.push(1);
+            continue;
+          }
+
+          if (kind === PREVIEW_KIND.IMAGE) {
+            const src = this.createDisplaySrc(item);
+            flat.push({
+              kind: PREVIEW_KIND.IMAGE,
+              src,
+              key: "img-" + i,
+            });
+            spans.push(1);
+            continue;
+          }
+
+          /* PDF → 多页 PNG */
+          try {
+            const urls = await renderPdfPagesToBlobUrls(item, this.revokeUrlList, {
+              scale: 1.35,
+              timeoutMs: 180000,
+            });
+            if (seq !== this.rebuildSeq) return;
+            if (!urls.length) {
+              flat.push({
+                kind: PREVIEW_KIND.UNKNOWN,
+                src: "",
+                key: "pdf-empty-" + i,
+                message: this.t("el.image.pdfRenderFail"),
+              });
+              spans.push(1);
+            } else {
+              urls.forEach((src, pi) => {
+                flat.push({
+                  kind: PREVIEW_KIND.IMAGE,
+                  src,
+                  key: "pdf-" + i + "-" + pi,
+                });
+              });
+              spans.push(urls.length);
+            }
+          } catch (err) {
+            if (seq !== this.rebuildSeq) return;
+            console.error(
+              "[lzt-element-image-preview] PDF 栅格化失败",
+              err
+            );
+            flat.push({
+              kind: PREVIEW_KIND.UNKNOWN,
+              src: "",
+              key: "pdf-err-" + i,
+              message:
+                this.t("el.image.pdfRenderFail") +
+                (err && err.message ? " (" + err.message + ")" : ""),
+            });
+            spans.push(1);
+          }
+        }
+
+        if (seq !== this.rebuildSeq) return;
+
+        this.flatItems = flat;
+
+        let flatStart = 0;
+        for (let j = 0; j < targetListIdx; j++) {
+          flatStart += spans[j] || 0;
+        }
+        this.index = Math.min(
+          flatStart,
+          Math.max(0, flat.length - 1)
+        );
+
+        this.$nextTick(() => this.syncLoadingState());
+      } catch (e) {
+        if (seq === this.rebuildSeq) {
+          console.error(e);
+        }
+      } finally {
+        if (seq === this.rebuildSeq) {
+          this.rasterLoading = false;
+          this.$nextTick(() => this.syncLoadingState());
+        }
+      }
+    },
+    createDisplaySrc(rawEntry) {
+      let entry = rawEntry;
+      if (
+        entry &&
+        typeof entry === "object" &&
+        !(entry instanceof Blob) &&
+        !(entry instanceof ArrayBuffer) &&
+        !ArrayBuffer.isView(entry)
+      ) {
+        if (entry.src != null) entry = entry.src;
+        else if (entry.url != null) entry = entry.url;
+        else if (entry.blob != null) entry = entry.blob;
+      }
+      if (entry == null) return "";
+      if (typeof entry === "string") return entry;
+      if (entry instanceof Blob) {
+        const b = entry;
+        const u = URL.createObjectURL(b);
+        this.revokeUrlList.push(u);
+        return u;
+      }
+      if (entry instanceof ArrayBuffer || ArrayBuffer.isView(entry)) {
+        const ab =
+          entry instanceof ArrayBuffer
+            ? entry
+            : entry.buffer.slice(
+                entry.byteOffset,
+                entry.byteOffset + entry.byteLength
+              );
+        const mime = imageMimeFromMagic(ab);
+        const blob = new Blob([ab], { type: mime });
+        const u = URL.createObjectURL(blob);
+        this.revokeUrlList.push(u);
+        return u;
+      }
+      return "";
+    },
+    revokeBlobUrls() {
+      (this.revokeUrlList || []).forEach((u) => {
+        try {
+          URL.revokeObjectURL(u);
+        } catch (e) {
+          /* noop */
+        }
+      });
+      this.revokeUrlList = [];
+    },
+    syncLoadingState() {
+      if (this.rasterLoading) return;
+      if (this.currentKind === "image") {
+        const $img = this.$refs.img;
+        if ($img && !$img.complete) this.loading = true;
+        else this.loading = false;
+      } else {
+        this.loading = false;
+      }
+    },
     hide() {
       this.deviceSupportUninstall();
       this.onClose();
@@ -191,27 +429,21 @@ export default {
         e.stopPropagation();
         const keyCode = e.keyCode;
         switch (keyCode) {
-          // ESC
           case 27:
             this.hide();
             break;
-          // SPACE
           case 32:
             this.toggleMode();
             break;
-          // LEFT_ARROW
           case 37:
             this.prev();
             break;
-          // UP_ARROW
           case 38:
             this.handleActions("zoomIn");
             break;
-          // RIGHT_ARROW
           case 39:
             this.next();
             break;
-          // DOWN_ARROW
           case 40:
             this.handleActions("zoomOut");
             break;
@@ -248,7 +480,8 @@ export default {
       e.target.alt = "加载失败";
     },
     handleMouseDown(e) {
-      if (this.loading || e.button !== 0) return;
+      if (this.currentKind !== "image" || this.loading || e.button !== 0)
+        return;
 
       const { offsetX, offsetY } = this.transform;
       const startX = e.pageX;
@@ -279,27 +512,39 @@ export default {
       };
     },
     toggleMode() {
-      if (this.loading) return;
+      if (this.currentKind !== "image" || this.loading || this.rasterLoading)
+        return;
 
       const modeNames = Object.keys(Mode);
       const modeValues = Object.values(Mode);
-      const index = modeValues.indexOf(this.mode);
-      const nextIndex = (index + 1) % modeNames.length;
+      const idx = modeValues.indexOf(this.mode);
+      const nextIndex = (idx + 1) % modeNames.length;
       this.mode = Mode[modeNames[nextIndex]];
       this.reset();
     },
     prev() {
-      if (this.isFirst && !this.infinite) return;
-      const len = this.urlList.length;
-      this.index = (this.index - 1 + len) % len;
+      const len = this.flatItems.length;
+      if (!len) return;
+      if (this.infinite) {
+        this.index = (this.index - 1 + len) % len;
+        return;
+      }
+      if (this.isFirst) return;
+      this.index = this.index - 1;
     },
     next() {
-      if (this.isLast && !this.infinite) return;
-      const len = this.urlList.length;
-      this.index = (this.index + 1) % len;
+      const len = this.flatItems.length;
+      if (!len) return;
+      if (this.infinite) {
+        this.index = (this.index + 1) % len;
+        return;
+      }
+      if (this.isLast) return;
+      this.index = this.index + 1;
     },
     handleActions(action, options = {}) {
-      if (this.loading) return;
+      if (this.currentKind !== "image" || this.loading || this.rasterLoading)
+        return;
       const { zoomRate, rotateDeg, enableTransition } = {
         zoomRate: 0.2,
         rotateDeg: 90,
@@ -333,15 +578,45 @@ export default {
     if (this.appendToBody) {
       document.body.appendChild(this.$el);
     }
-    // add tabindex then wrapper can be focusable via Javascript
-    // focus wrapper so arrow key can't cause inner scroll behavior underneath
     this.$refs["el-image-viewer__wrapper"].focus();
   },
   destroyed() {
-    // if appendToBody is true, remove DOM node after destroy
+    this.revokeBlobUrls();
     if (this.appendToBody && this.$el && this.$el.parentNode) {
       this.$el.parentNode.removeChild(this.$el);
     }
   },
 };
 </script>
+
+<style>
+/* 遮罩 / 画布 / 按钮：主题里 btn 与 canvas 同为 z-index:1 且 canvas 在 DOM 后，会盖住关闭与箭头 */
+.el-image-viewer__mask {
+  z-index: 0;
+}
+.el-image-viewer__canvas {
+  position: relative;
+  z-index: 1;
+}
+.el-image-viewer__btn {
+  z-index: 2;
+}
+.el-image-viewer__raster-loading {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: 14px;
+  padding: 24px;
+  text-align: center;
+}
+.el-image-viewer__unknown {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  padding: 24px;
+  max-width: 480px;
+  text-align: center;
+  line-height: 1.6;
+  font-size: 14px;
+}
+</style>

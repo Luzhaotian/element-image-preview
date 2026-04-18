@@ -107,7 +107,10 @@ export default {
       hasCheckedFormat: '{checked}/{total} checked' // to be translated
     },
     image: {
-      error: 'FAILED'
+      error: 'FAILED',
+      previewTypeUnknown: 'Cannot infer preview type. Pass preview-types as "image" or "pdf", or use { type: "pdf"|"image", src / blob }.',
+      pdfRasterLoading: 'Rendering PDF to images…',
+      pdfRenderFail: 'Failed to rasterize PDF (check file, CORS or network)'
     },
     pageHeader: {
       title: 'Back' // to be translated

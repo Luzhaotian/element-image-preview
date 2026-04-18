@@ -107,7 +107,10 @@ export default {
       hasCheckedFormat: '已选 {checked}/{total} 项'
     },
     image: {
-      error: '加载失败'
+      error: '加载失败',
+      previewTypeUnknown: '无法识别该预览项类型。请通过 preview-types 传入 "image" 或 "pdf"，或传入 { type: "pdf"|"image", src / blob }。',
+      pdfRasterLoading: '正在将 PDF 转为图片，请稍候…',
+      pdfRenderFail: 'PDF 转为图片失败（可检查文件是否损坏、跨域或网络）'
     },
     pageHeader: {
       title: '返回'

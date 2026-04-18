@@ -26,6 +26,8 @@
         v-if="showViewer"
         :on-close="closeViewer"
         :url-list="previewSrcList"
+        :preview-types="previewTypes"
+        :infinite="infinite"
       />
     </template>
   </div>
@@ -80,6 +82,16 @@ export default {
       default: 2000,
     },
     initialIndex: Number,
+    /** 与 preview-src-list 一一对应：'image' | 'pdf'；无扩展名/无 MIME 的文件流建议必传 */
+    previewTypes: {
+      type: Array,
+      default: () => [],
+    },
+    /** 预览是否首尾循环；默认 false，第一页不能上一张、最后一页不能下一张 */
+    infinite: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -113,18 +125,20 @@ export default {
       return Array.isArray(previewSrcList) && previewSrcList.length > 0;
     },
     imageIndex() {
-      let previewIndex = 0;
+      const list = this.previewSrcList || [];
+      const len = list.length;
+      if (!len) return 0;
       const initialIndex = this.initialIndex;
-      if (initialIndex >= 0) {
-        previewIndex = initialIndex;
-        return previewIndex;
+      if (
+        typeof initialIndex === "number" &&
+        !Number.isNaN(initialIndex) &&
+        initialIndex >= 0
+      ) {
+        return Math.min(initialIndex, len - 1);
       }
-      const srcIndex = this.previewSrcList.indexOf(this.src);
-      if (srcIndex >= 0) {
-        previewIndex = srcIndex;
-        return previewIndex;
-      }
-      return previewIndex;
+      const srcIndex = list.indexOf(this.src);
+      if (srcIndex >= 0) return srcIndex;
+      return 0;
     },
   },
 
