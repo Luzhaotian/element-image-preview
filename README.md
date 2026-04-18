@@ -17,11 +17,14 @@ npm i element-theme-chalk -S
 
 ### 导入
 
+自 v1.3.0 起，**不再把整份 Element 主题打进 JS**，请务必备好样式（与此前 README 推荐方式一致），否则图标与布局会异常。
+
 ```javascript
 // main.js
-import imagePreview from "lzt-element-image-preview"; // 导入插件
-import "element-theme-chalk"; // 导入样式文件，主要是 Element ui 的icon库
-console.log(imagePreview);
+import Vue from "vue";
+import imagePreview from "lzt-element-image-preview";
+import "element-theme-chalk"; // 图标字体 + 组件样式（必装）
+Vue.use(imagePreview);
 ```
 
 ### 使用
