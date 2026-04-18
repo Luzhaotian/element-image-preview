@@ -6,7 +6,12 @@
       class="el-image-viewer__wrapper"
       :style="{ 'z-index': viewerZIndex }"
     >
-      <div class="el-image-viewer__mask" @click.self="handleMaskClick"></div>
+      <div
+        class="el-image-viewer__mask"
+        :class="previewMaskClass"
+        :style="previewMaskStyle"
+        @click.self="handleMaskClick"
+      ></div>
       <!-- CLOSE -->
       <span class="el-image-viewer__btn el-image-viewer__close" @click="hide">
         <i class="el-icon-close"></i>
@@ -59,9 +64,10 @@
             v-if="currentKind === 'image'"
             ref="img"
             class="el-image-viewer__img"
+            :class="previewImageClass"
             :key="'img-' + index"
             :src="currentItem.src"
-            :style="imgStyle"
+            :style="mergedImgStyle"
             referrerpolicy="no-referrer"
             @load="handleImgLoad"
             @error="handleImgError"
@@ -145,6 +151,29 @@ export default {
       type: Boolean,
       default: false,
     },
+    /** 遮罩层额外 class（与主题类名并存） */
+    previewMaskClass: {
+      type: [String, Array, Object],
+      default: null,
+    },
+    /** 遮罩层额外 style（字符串或对象） */
+    previewMaskStyle: {
+      type: [String, Object],
+      default: null,
+    },
+    /** 预览大图额外 class（与 el-image-viewer__img 并存） */
+    previewImageClass: {
+      type: [String, Array, Object],
+      default: null,
+    },
+    /**
+     * 预览大图额外 style。内部仍会写入 transform / transition 等用于缩放拖拽；
+     * 同名字段以组件内部为准，建议只写边框、圆角、阴影等装饰样式。
+     */
+    previewImageStyle: {
+      type: [String, Object],
+      default: null,
+    },
   },
 
   data() {
@@ -205,6 +234,16 @@ export default {
         style.maxWidth = style.maxHeight = "100%";
       }
       return style;
+    },
+    /** 用户自定义样式 + 内部 transform，后者覆盖同名键以免破坏缩放 */
+    mergedImgStyle() {
+      const internal = this.imgStyle;
+      const extra = this.previewImageStyle;
+      if (extra == null) return internal;
+      if (typeof extra === "string") {
+        return [internal, extra];
+      }
+      return Object.assign({}, extra, internal);
     },
     viewerZIndex() {
       const nextZIndex = PopupManager.nextZIndex();

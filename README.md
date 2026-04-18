@@ -15,10 +15,10 @@
 
 ## 特性
 
-- 主要处理 Element 2.11及以前版本没有图片预览问题（只有图片预览可以使用 v1.3）
-- 与 Element `el-image` 相近的用法：`src`、`fit`、`lazy`、`preview-src-list` 等。
-- 预览层支持左右切换、`z-index`、可选 `**infinite`**（默认不循环首尾）。
-- `**preview-types**`：与 `preview-src-list` 下标对齐，显式声明 `image` / `pdf`（无扩展名、无 MIME 的二进制流建议必传）。
+- **v1.2** 起：针对 **Element UI 2.11 及以前**缺少（或不完善）官方图片预览的场景，提供**相对稳定**的缩略图 + 全屏图片预览，适合一般老项目接入。
+- **v1.3** 起：以**项目与打包优化**为主（样式外置等）；与 Element `el-image` 相近的用法：`src`、`fit`、`lazy`、`preview-src-list` 等。
+- 预览层支持左右切换、`z-index`、可选 `infinite`（默认不循环首尾）。
+- `preview-types`：与 `preview-src-list` 下标对齐，显式声明 `image` / `pdf`（无扩展名、无 MIME 的二进制流建议必传）。
 - PDF 使用 **pdf.js** 在客户端渲染为 PNG，与图片共用同一套预览交互（缩放、旋转等仅对图片页展示）。
 - 自 **v1.3.0** 起：**样式不打进 JS**，需自行引入 `element-theme-chalk`（或等价）中的 **image / image-viewer** 相关样式，否则图标与布局异常。
 
@@ -75,7 +75,29 @@ Vue.use(LztImagePreview);
 | `initial-index`    | `Number`  | —       | 打开预览时的起始下标。                                                                                        |
 | `z-index`          | `Number`  | `2000`  | 预览层 z-index。                                                                                       |
 | `infinite`         | `Boolean` | `false` | 是否在首尾循环切换。                                                                                         |
+| `preview-mask-class` | `String`，`Array`，`Object` | — | 全屏预览**遮罩层**（`.el-image-viewer__mask`）额外 class，与主题类名叠加。 |
+| `preview-mask-style` | `String`，`Object` | — | 遮罩层额外行内样式（如自定义背景色、透明度）。 |
+| `preview-image-class` | `String`，`Array`，`Object` | — | 预览**大图**（`.el-image-viewer__img`）额外 class。 |
+| `preview-image-style` | `String`，`Object` | — | 预览大图额外行内样式。**不要**依赖覆盖 `transform` / `transition`（由组件内部用于缩放、旋转）；适合写圆角、边框、阴影等。 |
 
+### 自定义遮罩与大图样式示例
+
+```vue
+<lzt-el-image
+  src="https://example.com/thumb.jpg"
+  style="width: 120px; height: 120px; cursor: pointer"
+  :preview-src-list="['https://example.com/a.jpg']"
+  preview-mask-class="my-preview-mask"
+  :preview-mask-style="{ background: 'rgba(0,0,0,.75)' }"
+  :preview-image-style="{ borderRadius: '8px', boxShadow: '0 8px 32px rgba(0,0,0,.35)' }"
+/>
+```
+
+```css
+.my-preview-mask {
+  backdrop-filter: blur(2px);
+}
+```
 
 其余行为（`fit`、`lazy`、`scroll-container` 等）与 Element `el-image` 同类 props 一致，可按需查阅 [Element Image 文档](https://element.eleme.cn/#/zh-CN/component/image)。
 
@@ -137,9 +159,13 @@ npm run serve
 
 ## 版本说明（摘要）
 
+每次发版请在仓库根目录 **[CHANGELOG.md](./CHANGELOG.md)** 顶部补充「本版相对上一版」的条目（与 `package.json` 的 `version` 一致）。
+
+- **v2.1**：`lztElImage` 增加全屏预览样式入口：`preview-mask-class` / `preview-mask-style`、`preview-image-class` / `preview-image-style`（遮罩与大图装饰样式，与内置缩放 transform 兼容合并）。
 - **v2.0**：预览默认**非循环**（`infinite` 默认 `false`）；仓库内移除未引用源码；与 PDF 流水线相关的细节见上文。
-- **v1.3+**：样式外置，务必引入 Element 主题中的 image 相关样式。
-- 更老版本说明见 [npm 版本列表](https://www.npmjs.com/package/lzt-element-image-preview?activeTab=versions)。
+- **v1.3**：项目与打包优化；**样式外置**，务必引入 Element 主题中的 image 相关样式。
+- **v1.2**：支持 Element UI 2.11 及以前环境下的**图片预览**（相对稳定，适合一般场景）。
+- 更细版本见 [CHANGELOG.md](./CHANGELOG.md) 与 [npm 版本列表](https://www.npmjs.com/package/lzt-element-image-preview?activeTab=versions)。
 
 ---
 

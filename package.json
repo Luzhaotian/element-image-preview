@@ -1,11 +1,12 @@
 {
   "name": "lzt-element-image-preview",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": false,
   "description": "基于 Element ui 封装的图片预览功能组件",
   "main": "dist/lzt-element-image-preview.umd.js",
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md"
   ],
   "repository": {
     "type": "git",

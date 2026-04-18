@@ -28,6 +28,10 @@
         :url-list="previewSrcList"
         :preview-types="previewTypes"
         :infinite="infinite"
+        :preview-mask-class="previewMaskClass"
+        :preview-mask-style="previewMaskStyle"
+        :preview-image-class="previewImageClass"
+        :preview-image-style="previewImageStyle"
       />
     </template>
   </div>
@@ -91,6 +95,26 @@ export default {
     infinite: {
       type: Boolean,
       default: false,
+    },
+    /** 全屏预览遮罩层额外 class */
+    previewMaskClass: {
+      type: [String, Array, Object],
+      default: null,
+    },
+    /** 全屏预览遮罩层额外 style */
+    previewMaskStyle: {
+      type: [String, Object],
+      default: null,
+    },
+    /** 全屏预览大图额外 class */
+    previewImageClass: {
+      type: [String, Array, Object],
+      default: null,
+    },
+    /** 全屏预览大图额外 style（勿覆盖 transform，见 viewer 说明） */
+    previewImageStyle: {
+      type: [String, Object],
+      default: null,
     },
   },
 
