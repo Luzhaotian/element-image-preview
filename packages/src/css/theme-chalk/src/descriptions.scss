@@ -1,6 +1,6 @@
-@import 'mixins/mixins';
-@import 'common/var';
-@import 'descriptions-item';
+@import "mixins/mixins";
+@import "common/var";
+@import "descriptions-item";
 
 @include b(descriptions) {
   box-sizing: border-box;

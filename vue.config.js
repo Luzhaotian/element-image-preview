@@ -5,6 +5,8 @@ const path = require("path");
 module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
+  /** 本地与 npm 库构建默认 `/`；GitHub Pages 在 CI 中设置 `VUE_PUBLIC_PATH=/仓库名/` */
+  publicPath: process.env.VUE_PUBLIC_PATH || "/",
   css: {
     extract: false,
   },

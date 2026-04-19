@@ -9,9 +9,7 @@
       :preview-src-list="previewList"
       :preview-types="previewTypeHints"
     />
-    <div
-      class="panel"
-    >
+    <div class="panel">
       <p><strong>测试数据</strong></p>
       <button type="button" @click="setDemo('img')">仅图片（外链）</button>
       <button type="button" @click="setDemo('pdfMozilla')">
@@ -22,12 +20,7 @@
       <div class="upload-row">
         <label>
           上传本地 PDF 或图片（可多选）：
-          <input
-            type="file"
-            accept=".pdf,image/*"
-            multiple
-            @change="onUpload"
-          />
+          <input type="file" accept=".pdf,image/*" multiple @change="onUpload" />
         </label>
       </div>
       <p class="hint">
@@ -134,8 +127,7 @@ export default {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const isPdf =
-          (file.type && file.type.indexOf("pdf") !== -1) ||
-          /\.pdf$/i.test(file.name);
+          (file.type && file.type.indexOf("pdf") !== -1) || /\.pdf$/i.test(file.name);
         const isImg = file.type && file.type.indexOf("image/") === 0;
         let typeHint = null;
         if (isPdf) typeHint = "pdf";
@@ -257,7 +249,9 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .file-item:hover {

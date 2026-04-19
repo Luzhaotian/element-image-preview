@@ -1,9 +1,9 @@
-@import 'mixins/mixins';
-@import 'common/var';
+@import "mixins/mixins";
+@import "common/var";
 
 @include b(descriptions-item) {
   vertical-align: top;
-  
+
   @include e(container) {
     display: flex;
 
@@ -20,7 +20,7 @@
   @include e(label) {
     &.has-colon {
       &::after {
-        content: ':';
+        content: ":";
         position: relative;
         top: -0.5px;
       }

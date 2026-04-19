@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/Luzhaotian/element-image-preview/issues"
   },
-  "homepage": "https://github.com/Luzhaotian/element-image-preview#readme",
+  "homepage": "https://luzhaotian.github.io/element-image-preview/",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -31,13 +31,19 @@
   "scripts": {
     "serve": "npm run sync-pdf-worker && vue-cli-service serve",
     "sync-pdf-worker": "node scripts/copy-pdf-worker.js",
-    "build": "vue-cli-service build",
+    "build": "npm run sync-pdf-worker && vue-cli-service build",
+    "format": "prettier --write \"**/*.{js,vue,json,css,scss,md}\"",
+    "format:check": "prettier --check \"**/*.{js,vue,json,css,scss,md}\"",
     "lint": "vue-cli-service lint",
     "lib": "vue-cli-service build --target lib packages/index.js",
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{js,vue}": "vue-cli-service lint"
+    "*.{js,vue}": [
+      "prettier --write",
+      "vue-cli-service lint"
+    ],
+    "*.{json,css,scss,md}": "prettier --write"
   },
   "dependencies": {
     "pdfjs-dist": "^4.6.82",
@@ -51,9 +57,11 @@
     "@vue/cli-service": "~5.0.0",
     "core-js": "^3.8.3",
     "eslint": "^7.32.0",
+    "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-vue": "^8.0.3",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
+    "prettier": "^3.8.3",
     "sass": "^1.69.4",
     "sass-loader": "^13.3.2",
     "vue": "^2.6.14",

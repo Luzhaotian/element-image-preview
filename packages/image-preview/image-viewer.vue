@@ -44,14 +44,8 @@
           <i class="el-image-viewer__actions__divider"></i>
           <i :class="mode.icon" @click="toggleMode"></i>
           <i class="el-image-viewer__actions__divider"></i>
-          <i
-            class="el-icon-refresh-left"
-            @click="handleActions('anticlocelise')"
-          ></i>
-          <i
-            class="el-icon-refresh-right"
-            @click="handleActions('clocelise')"
-          ></i>
+          <i class="el-icon-refresh-left" @click="handleActions('anticlocelise')"></i>
+          <i class="el-icon-refresh-right" @click="handleActions('clocelise')"></i>
         </div>
       </div>
       <!-- CANVAS -->
@@ -295,8 +289,7 @@ export default {
       const spans = [];
 
       const rawIdx = Number(this.initialIndex);
-      const startIdx =
-        Number.isFinite(rawIdx) && rawIdx >= 0 ? rawIdx : 0;
+      const startIdx = Number.isFinite(rawIdx) && rawIdx >= 0 ? rawIdx : 0;
       const targetListIdx = Math.min(startIdx, Math.max(0, list.length - 1));
 
       try {
@@ -312,7 +305,7 @@ export default {
             console.error(
               "[lzt-element-image-preview] 无法识别预览项类型（索引 " +
                 i +
-                "）。请为 preview-types 传入 \"image\" 或 \"pdf\"，或为该项设置 { type: \"pdf\"|\"image\" }。"
+                '）。请为 preview-types 传入 "image" 或 "pdf"，或为该项设置 { type: "pdf"|"image" }。'
             );
             flat.push({
               kind: PREVIEW_KIND.UNKNOWN,
@@ -361,10 +354,7 @@ export default {
             }
           } catch (err) {
             if (seq !== this.rebuildSeq) return;
-            console.error(
-              "[lzt-element-image-preview] PDF 栅格化失败",
-              err
-            );
+            console.error("[lzt-element-image-preview] PDF 栅格化失败", err);
             flat.push({
               kind: PREVIEW_KIND.UNKNOWN,
               src: "",
@@ -385,10 +375,7 @@ export default {
         for (let j = 0; j < targetListIdx; j++) {
           flatStart += spans[j] || 0;
         }
-        this.index = Math.min(
-          flatStart,
-          Math.max(0, flat.length - 1)
-        );
+        this.index = Math.min(flatStart, Math.max(0, flat.length - 1));
 
         this.$nextTick(() => this.syncLoadingState());
       } catch (e) {
@@ -427,10 +414,7 @@ export default {
         const ab =
           entry instanceof ArrayBuffer
             ? entry
-            : entry.buffer.slice(
-                entry.byteOffset,
-                entry.byteOffset + entry.byteLength
-              );
+            : entry.buffer.slice(entry.byteOffset, entry.byteOffset + entry.byteLength);
         const mime = imageMimeFromMagic(ab);
         const blob = new Blob([ab], { type: mime });
         const u = URL.createObjectURL(blob);
@@ -519,8 +503,7 @@ export default {
       e.target.alt = "加载失败";
     },
     handleMouseDown(e) {
-      if (this.currentKind !== "image" || this.loading || e.button !== 0)
-        return;
+      if (this.currentKind !== "image" || this.loading || e.button !== 0) return;
 
       const { offsetX, offsetY } = this.transform;
       const startX = e.pageX;
@@ -551,8 +534,7 @@ export default {
       };
     },
     toggleMode() {
-      if (this.currentKind !== "image" || this.loading || this.rasterLoading)
-        return;
+      if (this.currentKind !== "image" || this.loading || this.rasterLoading) return;
 
       const modeNames = Object.keys(Mode);
       const modeValues = Object.values(Mode);
@@ -582,8 +564,7 @@ export default {
       this.index = this.index + 1;
     },
     handleActions(action, options = {}) {
-      if (this.currentKind !== "image" || this.loading || this.rasterLoading)
-        return;
+      if (this.currentKind !== "image" || this.loading || this.rasterLoading) return;
       const { zoomRate, rotateDeg, enableTransition } = {
         zoomRate: 0.2,
         rotateDeg: 90,
@@ -594,9 +575,7 @@ export default {
       switch (action) {
         case "zoomOut":
           if (transform.scale > 0.2) {
-            transform.scale = parseFloat(
-              (transform.scale - zoomRate).toFixed(3)
-            );
+            transform.scale = parseFloat((transform.scale - zoomRate).toFixed(3));
           }
           break;
         case "zoomIn":

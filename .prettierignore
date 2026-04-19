@@ -1,0 +1,10 @@
+dist
+node_modules
+package-lock.json
+coverage
+*.min.js
+public/pdf.worker.min.mjs
+
+# Element theme-chalk 拷贝，避免与上游主题 diff 被格式化放大
+packages/src/css/theme-chalk/
+src/css/theme-chalk/

@@ -1,5 +1,5 @@
-@import 'mixins/mixins';
-@import 'common/var';
+@import "mixins/mixins";
+@import "common/var";
 
 @mixin circle-size($size) {
   width: $size;
@@ -80,5 +80,4 @@
       height: 22%;
     }
   }
-
 }

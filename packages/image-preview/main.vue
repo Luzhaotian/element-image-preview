@@ -40,17 +40,11 @@
 <script>
 import ImageViewer from "./image-viewer";
 import Locale from "../src/mixins/locale.js";
-import {
-  on,
-  off,
-  getScrollContainer,
-  isInContainer,
-} from "../src/utils/dom.js";
+import { on, off, getScrollContainer, isInContainer } from "../src/utils/dom.js";
 import { isString, isHtmlElement } from "../src/utils/types.js";
 import throttle from "throttle-debounce/throttle";
 
-const isSupportObjectFit = () =>
-  document.documentElement.style.objectFit !== undefined;
+const isSupportObjectFit = () => document.documentElement.style.objectFit !== undefined;
 
 const ObjectFit = {
   NONE: "none",
@@ -133,16 +127,12 @@ export default {
     imageStyle() {
       const { fit } = this;
       if (!this.$isServer && fit) {
-        return isSupportObjectFit()
-          ? { "object-fit": fit }
-          : this.getImageStyle(fit);
+        return isSupportObjectFit() ? { "object-fit": fit } : this.getImageStyle(fit);
       }
       return {};
     },
     alignCenter() {
-      return (
-        !this.$isServer && !isSupportObjectFit() && this.fit !== ObjectFit.FILL
-      );
+      return !this.$isServer && !isSupportObjectFit() && this.fit !== ObjectFit.FILL;
     },
     preview() {
       const { previewSrcList } = this;
@@ -259,18 +249,15 @@ export default {
      */
     getImageStyle(fit) {
       const { imageWidth, imageHeight } = this;
-      const { clientWidth: containerWidth, clientHeight: containerHeight } =
-        this.$el;
+      const { clientWidth: containerWidth, clientHeight: containerHeight } = this.$el;
 
-      if (!imageWidth || !imageHeight || !containerWidth || !containerHeight)
-        return {};
+      if (!imageWidth || !imageHeight || !containerWidth || !containerHeight) return {};
 
       const imageAspectRatio = imageWidth / imageHeight;
       const containerAspectRatio = containerWidth / containerHeight;
 
       if (fit === ObjectFit.SCALE_DOWN) {
-        const isSmaller =
-          imageWidth < containerWidth && imageHeight < containerHeight;
+        const isSmaller = imageWidth < containerWidth && imageHeight < containerHeight;
         fit = isSmaller ? ObjectFit.NONE : ObjectFit.CONTAIN;
       }
 

@@ -124,9 +124,7 @@ export const isEdge = function () {
 };
 
 export const isFirefox = function () {
-  return (
-    !Vue.prototype.$isServer && !!window.navigator.userAgent.match(/firefox/i)
-  );
+  return !Vue.prototype.$isServer && !!window.navigator.userAgent.match(/firefox/i);
 };
 
 export const autoprefixer = function (style) {
@@ -146,10 +144,7 @@ export const autoprefixer = function (style) {
 
 export const kebabCase = function (str) {
   const hyphenateRE = /([^-])([A-Z])/g;
-  return str
-    .replace(hyphenateRE, "$1-$2")
-    .replace(hyphenateRE, "$1-$2")
-    .toLowerCase();
+  return str.replace(hyphenateRE, "$1-$2").replace(hyphenateRE, "$1-$2").toLowerCase();
 };
 
 export const capitalize = function (str) {
@@ -244,7 +239,5 @@ export function objToArray(obj) {
 }
 
 export const isMac = function () {
-  return (
-    !Vue.prototype.$isServer && /macintosh|mac os x/i.test(navigator.userAgent)
-  );
+  return !Vue.prototype.$isServer && /macintosh|mac os x/i.test(navigator.userAgent);
 };

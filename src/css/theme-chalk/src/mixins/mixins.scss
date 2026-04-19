@@ -53,22 +53,22 @@
  -------------------------- */
 @mixin placeholder {
   &::-webkit-input-placeholder {
-    @content
+    @content;
   }
 
   &::-moz-placeholder {
-    @content
+    @content;
   }
 
   &:-ms-input-placeholder {
-    @content
+    @content;
   }
 }
 
 /* BEM
  -------------------------- */
 @mixin b($block) {
-  $B: $namespace+'-'+$block !global;
+  $B: $namespace + "-" + $block !global;
 
   .#{$B} {
     @content;
@@ -116,7 +116,7 @@
 
 @mixin configurable-m($modifier, $E-flag: false) {
   $selector: &;
-  $interpolation: '';
+  $interpolation: "";
 
   @if $E-flag {
     $interpolation: $element-separator + $E-flag;
@@ -124,30 +124,30 @@
 
   @at-root {
     #{$selector} {
-      .#{$B+$interpolation+$modifier-separator+$modifier} {
+      .#{$B + $interpolation + $modifier-separator + $modifier} {
         @content;
       }
     }
   }
 }
 
-@mixin spec-selector($specSelector: '', $element: $E, $modifier: false, $block: $B) {
-  $modifierCombo: '';
+@mixin spec-selector($specSelector: "", $element: $E, $modifier: false, $block: $B) {
+  $modifierCombo: "";
 
   @if $modifier {
     $modifierCombo: $modifier-separator + $modifier;
   }
 
   @at-root {
-    #{&}#{$specSelector}.#{$block+$element-separator+$element+$modifierCombo} {
-      @content
+    #{&}#{$specSelector}.#{$block + $element-separator + $element + $modifierCombo} {
+      @content;
     }
   }
 }
 
 @mixin meb($modifier: false, $element: $E, $block: $B) {
   $selector: &;
-  $modifierCombo: '';
+  $modifierCombo: "";
 
   @if $modifier {
     $modifierCombo: $modifier-separator + $modifier;
@@ -155,8 +155,8 @@
 
   @at-root {
     #{$selector} {
-      .#{$block+$element-separator+$element+$modifierCombo} {
-        @content
+      .#{$block + $element-separator + $element + $modifierCombo} {
+        @content;
       }
     }
   }
@@ -171,20 +171,19 @@
 }
 
 @mixin extend-rule($name) {
-  @extend #{'%shared-'+$name};
+  @extend #{"%shared-" + $name};
 }
 
 @mixin share-rule($name) {
-  $rule-name: '%shared-'+$name;
+  $rule-name: "%shared-" + $name;
 
   @at-root #{$rule-name} {
-    @content
+    @content;
   }
 }
 
 @mixin pseudo($pseudo) {
-  @at-root #{&}#{':#{$pseudo}'} {
-    @content
+  @at-root #{&}#{":#{$pseudo}"} {
+    @content;
   }
 }
-

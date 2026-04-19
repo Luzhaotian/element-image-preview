@@ -1,11 +1,11 @@
-import Vue from 'vue';
+import Vue from "vue";
 
 export function isString(obj) {
-  return Object.prototype.toString.call(obj) === '[object String]';
+  return Object.prototype.toString.call(obj) === "[object String]";
 }
 
 export function isObject(obj) {
-  return Object.prototype.toString.call(obj) === '[object Object]';
+  return Object.prototype.toString.call(obj) === "[object Object]";
 }
 
 export function isHtmlElement(node) {
@@ -18,20 +18,24 @@ export function isHtmlElement(node) {
  */
 let isFunction = (functionToCheck) => {
   var getType = {};
-  return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+  return (
+    functionToCheck && getType.toString.call(functionToCheck) === "[object Function]"
+  );
 };
 
-if (typeof /./ !== 'function' && typeof Int8Array !== 'object' && (Vue.prototype.$isServer || typeof document.childNodes !== 'function')) {
-  isFunction = function(obj) {
-    return typeof obj === 'function' || false;
+if (
+  typeof /./ !== "function" &&
+  typeof Int8Array !== "object" &&
+  (Vue.prototype.$isServer || typeof document.childNodes !== "function")
+) {
+  isFunction = function (obj) {
+    return typeof obj === "function" || false;
   };
 }
 
-export {
-  isFunction
-};
+export { isFunction };
 
-export const isUndefined = (val)=> {
+export const isUndefined = (val) => {
   return val === void 0;
 };
 

@@ -26,9 +26,7 @@ function computeWorkerSrc(pdfjs) {
     return window.__LZT_PDFJS_WORKER__;
   }
   const base =
-    typeof process !== "undefined" &&
-    process.env &&
-    process.env.BASE_URL != null
+    typeof process !== "undefined" && process.env && process.env.BASE_URL != null
       ? String(process.env.BASE_URL)
       : "/";
   const withSlash = base.endsWith("/") ? base : base + "/";
@@ -78,7 +76,10 @@ function withTimeout(promise, ms, message, onTimeout) {
 let pdfRenderChain = Promise.resolve();
 
 function enqueuePdfRender(fn) {
-  const next = pdfRenderChain.then(() => fn(), () => fn());
+  const next = pdfRenderChain.then(
+    () => fn(),
+    () => fn()
+  );
   pdfRenderChain = next.catch(() => {});
   return next;
 }
@@ -113,21 +114,14 @@ export async function getPdfDocumentParams(rawEntry) {
   if (ArrayBuffer.isView(entry)) {
     return {
       data: new Uint8Array(
-        entry.buffer.slice(
-          entry.byteOffset,
-          entry.byteOffset + entry.byteLength
-        )
+        entry.buffer.slice(entry.byteOffset, entry.byteOffset + entry.byteLength)
       ),
     };
   }
   return null;
 }
 
-async function renderPdfPagesToBlobUrlsInnerWithTask(
-  loadingTask,
-  revokeList,
-  options
-) {
+async function renderPdfPagesToBlobUrlsInnerWithTask(loadingTask, revokeList, options) {
   const scale = options && options.scale != null ? options.scale : 2;
   pdfDebug("await document…");
   try {
@@ -194,8 +188,7 @@ async function renderPdfPagesToBlobUrlsInnerWithTask(
  * @returns {Promise<string[]>} 每页一张 PNG 的 object URL
  */
 export async function renderPdfPagesToBlobUrls(rawEntry, revokeList, options) {
-  const timeoutMs =
-    options && options.timeoutMs != null ? options.timeoutMs : 120000;
+  const timeoutMs = options && options.timeoutMs != null ? options.timeoutMs : 120000;
 
   return enqueuePdfRender(() => {
     let loadingTaskForTimeout = null;

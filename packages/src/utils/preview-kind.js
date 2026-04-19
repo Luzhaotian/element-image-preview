@@ -21,12 +21,7 @@ function isJpegMagic(buf) {
 function isPngMagic(buf) {
   if (!buf || buf.byteLength < 4) return false;
   const u = new Uint8Array(buf);
-  return (
-    u[0] === 0x89 &&
-    u[1] === 0x50 &&
-    u[2] === 0x4e &&
-    u[3] === 0x47
-  );
+  return u[0] === 0x89 && u[1] === 0x50 && u[2] === 0x4e && u[3] === 0x47;
 }
 
 function isGifMagic(buf) {
@@ -74,14 +69,12 @@ export function inferPreviewKind(entry) {
       return PREVIEW_KIND.UNKNOWN;
     }
     if (/\.pdf(\?|#|$)/i.test(s)) return PREVIEW_KIND.PDF;
-    if (/\.(jpe?g|png|gif|webp|bmp|svg)(\?|#|$)/i.test(s))
-      return PREVIEW_KIND.IMAGE;
+    if (/\.(jpe?g|png|gif|webp|bmp|svg)(\?|#|$)/i.test(s)) return PREVIEW_KIND.IMAGE;
     try {
       const u = new URL(s);
       const path = u.pathname.toLowerCase();
       if (path.endsWith(".pdf")) return PREVIEW_KIND.PDF;
-      if (/\.(jpe?g|png|gif|webp|bmp|svg)$/.test(path))
-        return PREVIEW_KIND.IMAGE;
+      if (/\.(jpe?g|png|gif|webp|bmp|svg)$/.test(path)) return PREVIEW_KIND.IMAGE;
     } catch (e) {
       /* relative */
     }
