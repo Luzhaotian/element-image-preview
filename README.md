@@ -103,12 +103,12 @@ Vue.use(LztImagePreview);
 ## PDF 与 Worker
 
 - 包内依赖 **pdfjs-dist**，UMD 构建体积会包含 PDF 能力。
-- 运行时默认尝试**同源**加载 Worker：`{应用 origin}{publicPath}pdf.worker.min.mjs`。
-- 若部署路径或 CDN 与默认不符，可在应用入口（尽早）设置：
+- 运行时默认尝试**同源**加载 Worker：`{应用 origin}{publicPath}pdf.worker.min.mjs`。子路径部署（如 GitHub Pages）会从已加载的 `/js/*.js` 推断 `publicPath`，避免误请求到域名根下的 worker。
+- 需要**自定义 Worker 地址**时（网络受限、内网、CDN 与默认不一致）：在应用入口（`new Vue` 之前）设置：
   ```js
   window.__LZT_PDFJS_WORKER__ = "https://你的域名/static/pdf.worker.min.mjs";
   ```
-  Worker 文件需与当前 **pdfjs-dist 大版本** 匹配；可从本仓库 `node_modules/pdfjs-dist/build/pdf.worker.min.mjs` 复制，或参考仓库内脚本 `scripts/copy-pdf-worker.js` 的思路同步到静态资源目录。
+  Worker 需与当前 **pdfjs-dist 大版本** 匹配；可从 `node_modules/pdfjs-dist/build/pdf.worker.min.mjs` 复制，或参考 `scripts/copy-pdf-worker.js` 同步到静态资源目录。
 - 远程 PDF 地址需服务端允许 **CORS**，否则无法拉取。
 - 调试：控制台执行 `window.__LZT_PDF_DEBUG__ = true` 后刷新，可查看 `[LZT-PDF]` 日志。
 

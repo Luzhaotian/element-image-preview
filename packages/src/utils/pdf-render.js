@@ -3,7 +3,7 @@
  * 静态导入，保证 UMD 单文件可独立工作。
  *
  * Worker 默认同源 `public/pdf.worker.min.mjs`（见 `npm run sync-pdf-worker`），
- * 也可设置 `window.__LZT_PDFJS_WORKER__`。
+ * 也可设置 `window.__LZT_PDFJS_WORKER__`（自建 CDN / 内网 / 网络不稳定时推荐）。
  * 调试日志：`window.__LZT_PDF_DEBUG__ = true` 后刷新。
  */
 
@@ -20,19 +20,65 @@ function pdfDebug(...args) {
   console.log("[LZT-PDF]", ...args);
 }
 
+/**
+ * 从已加载的 webpack 脚本推断 publicPath（如 /element-image-preview/），
+ * 避免子路径部署时 BASE_URL 未注入而误解析到站点根。
+ */
+function inferPublicPathFromScripts() {
+  if (typeof document === "undefined") return null;
+  const scripts = document.getElementsByTagName("script");
+  for (let i = scripts.length - 1; i >= 0; i--) {
+    const src = scripts[i].src;
+    if (!src) continue;
+    try {
+      const u = new URL(src);
+      const j = u.pathname.indexOf("/js/");
+      if (j === -1) continue;
+      u.pathname = u.pathname.slice(0, j + 1);
+      return u.href;
+    } catch (e) {
+      /* continue */
+    }
+  }
+  return null;
+}
+
+/** 当前页面所在「目录」URL（末尾带 /），用于 BASE_URL 为 `/` 时的同源 worker */
+function getPageDirectoryUrl() {
+  const { origin, pathname } = window.location;
+  if (pathname.endsWith("/")) return origin + pathname;
+  const i = pathname.lastIndexOf("/");
+  return i >= 0 ? origin + pathname.slice(0, i + 1) : origin + "/";
+}
+
 function computeWorkerSrc(pdfjs) {
   const ver = pdfjs.version || PDFJS_VERSION;
   if (typeof window !== "undefined" && window.__LZT_PDFJS_WORKER__) {
     return window.__LZT_PDFJS_WORKER__;
   }
+
+  const fromScript = inferPublicPathFromScripts();
+  if (fromScript) {
+    try {
+      return new URL("pdf.worker.min.mjs", fromScript).href;
+    } catch (e) {
+      /* fall through */
+    }
+  }
+
   const base =
     typeof process !== "undefined" && process.env && process.env.BASE_URL != null
       ? String(process.env.BASE_URL)
       : "/";
   const withSlash = base.endsWith("/") ? base : base + "/";
+
   if (typeof window !== "undefined") {
     try {
-      const originBase = new URL(withSlash, window.location.href).href;
+      // BASE_URL 为 `/` 时，不可用 new URL('/', page)，否则会落到域名根（子路径部署会错）
+      const originBase =
+        withSlash === "/"
+          ? getPageDirectoryUrl()
+          : new URL(withSlash, window.location.href).href;
       return new URL("pdf.worker.min.mjs", originBase).href;
     } catch (e) {
       /* fall through */
