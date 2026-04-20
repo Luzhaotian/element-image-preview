@@ -63,17 +63,17 @@ Vue.use(LztImagePreview);
 
 除与 `el-image` 对齐的常用项外，预览相关属性如下。
 
-| 属性                  | 类型                        | 默认值  | 说明                                                                                                                      |
-| --------------------- | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| `preview-src-list`    | `Array`                     | `[]`    | 预览列表。每项可为字符串 URL、`Blob` / `File` / `ArrayBuffer`，或对象 `{ src / url / blob, type?: 'image'                 | 'pdf' }`。 |
-| `preview-types`       | `Array`                     | `[]`    | 与列表**等长**时按位指定 `'image'` / `'pdf'`；无法从 URL / 魔数推断时建议必传。                                           |
-| `initial-index`       | `Number`                    | —       | 打开预览时的起始下标。                                                                                                    |
-| `z-index`             | `Number`                    | `2000`  | 预览层 z-index。                                                                                                          |
-| `infinite`            | `Boolean`                   | `false` | 是否在首尾循环切换。                                                                                                      |
-| `preview-mask-class`  | `String`，`Array`，`Object` | —       | 全屏预览**遮罩层**（`.el-image-viewer__mask`）额外 class，与主题类名叠加。                                                |
-| `preview-mask-style`  | `String`，`Object`          | —       | 遮罩层额外行内样式（如自定义背景色、透明度）。                                                                            |
-| `preview-image-class` | `String`，`Array`，`Object` | —       | 预览**大图**（`.el-image-viewer__img`）额外 class。                                                                       |
-| `preview-image-style` | `String`，`Object`          | —       | 预览大图额外行内样式。**不要**依赖覆盖 `transform` / `transition`（由组件内部用于缩放、旋转）；适合写圆角、边框、阴影等。 |
+| 属性                  | 类型                        | 默认值  | 说明                                                                                                                        |
+| --------------------- | --------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `preview-src-list`    | `Array`                     | `[]`    | 预览列表。每项可为字符串 URL、`Blob` / `File` / `ArrayBuffer`，或对象 `{ src / url / blob, type?: 'image' &#124; 'pdf' }`。 |
+| `preview-types`       | `Array`                     | `[]`    | 与列表**等长**时按位指定 `'image'` / `'pdf'`；无法从 URL / 魔数推断时建议必传。                                             |
+| `initial-index`       | `Number`                    | —       | 打开预览时的起始下标。                                                                                                      |
+| `z-index`             | `Number`                    | `2000`  | 预览层 z-index。                                                                                                            |
+| `infinite`            | `Boolean`                   | `false` | 是否在首尾循环切换。                                                                                                        |
+| `preview-mask-class`  | `String`，`Array`，`Object` | —       | 全屏预览**遮罩层**（`.el-image-viewer__mask`）额外 class，与主题类名叠加。                                                  |
+| `preview-mask-style`  | `String`，`Object`          | —       | 遮罩层额外行内样式（如自定义背景色、透明度）。                                                                              |
+| `preview-image-class` | `String`，`Array`，`Object` | —       | 预览**大图**（`.el-image-viewer__img`）额外 class。                                                                         |
+| `preview-image-style` | `String`，`Object`          | —       | 预览大图额外行内样式。**不要**依赖覆盖 `transform` / `transition`（由组件内部用于缩放、旋转）；适合写圆角、边框、阴影等。   |
 
 ### 自定义遮罩与大图样式示例
 
