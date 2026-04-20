@@ -2,12 +2,13 @@
 
 基于 **Vue 2** 与 **Element UI** 的 `el-image` 思路封装的图片预览组件，在缩略图与全屏预览中支持**多张图片**与 **PDF（按页栅格化为图片）** 混排切换。
 
-| 项          | 说明                                                                                   |
-| ----------- | -------------------------------------------------------------------------------------- |
-| 包名        | `[lzt-element-image-preview](https://www.npmjs.com/package/lzt-element-image-preview)` |
-| 许可        | MIT                                                                                    |
-| Vue         | `^2.6`（peer）                                                                         |
-| 源码 / 反馈 | [GitHub Issues](https://github.com/Luzhaotian/element-image-preview/issues)            |
+| 项          | 说明                                                                                                       |
+| ----------- | ---------------------------------------------------------------------------------------------------------- |
+| 包名        | `[lzt-element-image-preview](https://www.npmjs.com/package/lzt-element-image-preview)`                     |
+| 在线预览    | [https://luzhaotian.github.io/element-image-preview/](https://luzhaotian.github.io/element-image-preview/) |
+| 许可        | MIT                                                                                                        |
+| Vue         | `^2.6`（peer）                                                                                             |
+| 源码 / 反馈 | [GitHub Issues](https://github.com/Luzhaotian/element-image-preview/issues)                                |
 
 ---
 
@@ -63,8 +64,8 @@ Vue.use(LztImagePreview);
 除与 `el-image` 对齐的常用项外，预览相关属性如下。
 
 | 属性                  | 类型                        | 默认值  | 说明                                                                                                                      |
-| --------------------- | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- | --- | -------------------- | ---------- |
-| `preview-src-list`    | `Array`                     | `[]`    | 预览列表。每项可为字符串 URL、`Blob` / `File` / `ArrayBuffer`，或 `{ src                                                  | url | blob, type?: 'image' | 'pdf' }`。 |
+| --------------------- | --------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `preview-src-list`    | `Array`                     | `[]`    | 预览列表。每项可为字符串 URL、`Blob` / `File` / `ArrayBuffer`，或对象 `{ src / url / blob, type?: 'image'                 | 'pdf' }`。 |
 | `preview-types`       | `Array`                     | `[]`    | 与列表**等长**时按位指定 `'image'` / `'pdf'`；无法从 URL / 魔数推断时建议必传。                                           |
 | `initial-index`       | `Number`                    | —       | 打开预览时的起始下标。                                                                                                    |
 | `z-index`             | `Number`                    | `2000`  | 预览层 z-index。                                                                                                          |
@@ -161,7 +162,7 @@ npm run serve
 
 **首次启用：** 在仓库 **Settings → Pages** 中，将 **Build and deployment** 的 **Source** 选为 **GitHub Actions**（不要再用 `gh-pages` 分支作为来源）。
 
-部署完成后，演示地址一般为：`https://<你的用户名>.github.io/<仓库名>/`（本仓库示例：[在线演示](https://luzhaotian.github.io/element-image-preview/)）。
+部署完成后可直接访问本仓库演示：[https://luzhaotian.github.io/element-image-preview/](https://luzhaotian.github.io/element-image-preview/)；若你是 fork 后部署，则地址为 `https://<你的用户名>.github.io/<仓库名>/`。
 
 ---
 
