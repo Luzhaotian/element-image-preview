@@ -2,13 +2,14 @@
 
 基于 **Vue 2** 与 **Element UI** 的 `el-image` 思路封装的图片预览组件，在缩略图与全屏预览中支持**多张图片**与 **PDF（按页栅格化为图片）** 混排切换。
 
-| 项          | 说明                                                                                                       |
-| ----------- | ---------------------------------------------------------------------------------------------------------- |
-| 包名        | `[lzt-element-image-preview](https://www.npmjs.com/package/lzt-element-image-preview)`                     |
-| 在线预览    | [https://luzhaotian.github.io/element-image-preview/](https://luzhaotian.github.io/element-image-preview/) |
-| 许可        | MIT                                                                                                        |
-| Vue         | `^2.6`（peer）                                                                                             |
-| 源码 / 反馈 | [GitHub Issues](https://github.com/Luzhaotian/element-image-preview/issues)                                |
+| 项             | 说明                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------- |
+| 包名           | `[lzt-element-image-preview](https://www.npmjs.com/package/lzt-element-image-preview)`                     |
+| 在线预览       | [https://luzhaotian.github.io/element-image-preview/](https://luzhaotian.github.io/element-image-preview/) |
+| 许可           | MIT                                                                                                        |
+| Vue            | `^2.6`（peer）                                                                                             |
+| 源码 / 反馈    | [GitHub Issues](https://github.com/Luzhaotian/element-image-preview/issues)                                |
+| 相关（开发中） | [支持更多类型的 npm 包正在开发中](https://www.npmjs.com/package/element-file-preview)                      |
 
 ---
 
