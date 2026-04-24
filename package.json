@@ -36,6 +36,7 @@
     "format:check": "prettier --check \"**/*.{js,vue,json,css,scss,md}\"",
     "lint": "vue-cli-service lint",
     "lib": "vue-cli-service build --target lib packages/index.js",
+    "publish:npm": "npm publish --registry=https://registry.npmjs.org/ --access public",
     "prepare": "husky"
   },
   "lint-staged": {
